@@ -2,43 +2,52 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-BOOL parseDword(const char* in, DWORD* out) {
-    char* end;
-    long result = strtol(in, &end, 10);
-    BOOL success = (errno == 0 && end != in);
-
-    if (success) {
-        *out = result;
-    }
-
-    return success;
-}
+const int MIN_DELAY_MS = 150;
+const int MIN_REPEAT_MS = 1;
 
 int main(int argc, char* argv[]) {
-    FILTERKEYS keys = { sizeof(FILTERKEYS) };
+    long argDelayMs;
+    long argRepeatMs;
 
-    if (argc == 3
-        && parseDword(argv[1], &keys.iDelayMSec)
-        && parseDword(argv[2], &keys.iRepeatMSec)
-    ) {
-        printf(
-            "Setting keyrate: delay: %d, rate: %d\n",
-            (int) keys.iDelayMSec,
-            (int) keys.iRepeatMSec
-        );
-        keys.dwFlags = FKF_FILTERKEYSON|FKF_AVAILABLE;
-    }
-    else if (argc == 1) {
-        puts("No parameters given: disabling.");
+    if (argc == 3) {
+        char* end1;
+        char* end2;
+
+        argDelayMs = strtol(argv[1], &end1, 10);
+        argRepeatMs = strtol(argv[2], &end2, 10);
     }
     else {
-        puts("Usage: keyrate <delay ms> <repeat ms>\nCall with no parameters to disable.");
+        puts("Usage: keyrate.exe <delay ms> <repeat ms>");
         return 0;
     }
 
-    if (!SystemParametersInfo(SPI_SETFILTERKEYS, 0, (LPVOID) &keys, 0)) {
-        fprintf(stderr, "System call failed.\nUnable to set keyrate.");
+    if (argDelayMs < MIN_DELAY_MS || argRepeatMs < MIN_REPEAT_MS) {
+        puts("Invalid input - Minimum values are:");
+        printf(
+            "Delay: %dms | Rate: %dms\n",
+            MIN_DELAY_MS,
+            MIN_REPEAT_MS
+        );
+        return 0;
     }
+
+    FILTERKEYS keys = { sizeof(FILTERKEYS) };
+
+    keys.iDelayMSec = argDelayMs;
+    keys.iRepeatMSec = argRepeatMs;
+
+    keys.dwFlags = FKF_FILTERKEYSON|FKF_AVAILABLE;
+
+    if (!SystemParametersInfo(SPI_SETFILTERKEYS, 0, (LPVOID) &keys, 0)) {
+        fprintf(stderr, "System call failed - Unable to set keyrate.");
+        return 1;
+    }
+
+    printf(
+        "Set keyrate - Delay: %dms | Rate: %dms\n",
+        keys.iDelayMSec,
+        keys.iRepeatMSec
+    );
 
     return 0;
 }
