@@ -11,6 +11,10 @@ Produces substantially larger binaries compared to the original. (91KB vs 3KB)
 
 `make build` or `gcc.exe -O2 -o keyrate.exe keyrate.c`
 
+Move the built binary into a folder in your PATH.
+
 ## Usage
 
 `keyrate.exe <delay ms> <rate ms>`
+
+To disable, execute `keyrate.exe` without arguments.
