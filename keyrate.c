@@ -5,7 +5,18 @@
 const int MIN_DELAY_MS = 150;
 const int MIN_REPEAT_MS = 1;
 
+int trySetKeyRate(FILTERKEYS* keys) {
+    if (!SystemParametersInfo(SPI_SETFILTERKEYS, 0, (LPVOID) keys, 0)) {
+        fprintf(stderr, "System call failed - Unable to set keyrate.");
+        return 1;
+    }
+
+    return 0;
+}
+
 int main(int argc, char* argv[]) {
+    FILTERKEYS keys = { sizeof(FILTERKEYS) };
+
     long argDelayMs;
     long argRepeatMs;
 
@@ -15,6 +26,10 @@ int main(int argc, char* argv[]) {
 
         argDelayMs = strtol(argv[1], &end1, 10);
         argRepeatMs = strtol(argv[2], &end2, 10);
+    }
+    else if (argc == 1) {
+        puts("Disabled keyrate");
+        return trySetKeyRate(&keys);
     }
     else {
         puts("Usage: keyrate.exe <delay ms> <repeat ms>");
@@ -31,15 +46,12 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    FILTERKEYS keys = { sizeof(FILTERKEYS) };
-
     keys.iDelayMSec = argDelayMs;
     keys.iRepeatMSec = argRepeatMs;
 
     keys.dwFlags = FKF_FILTERKEYSON|FKF_AVAILABLE;
 
-    if (!SystemParametersInfo(SPI_SETFILTERKEYS, 0, (LPVOID) &keys, 0)) {
-        fprintf(stderr, "System call failed - Unable to set keyrate.");
+    if (trySetKeyRate(&keys) == 1) {
         return 1;
     }
 
