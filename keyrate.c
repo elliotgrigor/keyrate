@@ -32,7 +32,16 @@ int main(int argc, char* argv[]) {
         return trySetKeyRate(&keys);
     }
     else {
-        puts("Usage: keyrate.exe <delay ms> <repeat ms>");
+        puts("Usage: keyrate.exe [delay] [repeat]\n");
+        puts("Arguments:");
+        printf(
+            "  [delay]   the delay (ms) before the held key starts repeating (min. %d)\n",
+            MIN_DELAY_MS
+        );
+        printf(
+            "  [repeat]  the pause (ms) between each repeated key input (min. %d)\n\n",
+            MIN_REPEAT_MS
+        );
         return 0;
     }
 
