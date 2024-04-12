@@ -9,7 +9,7 @@ by the Windows keyboard control panel.
 
 Produces substantially larger binaries compared to the original. (49KB vs 3KB)
 
-`make build` or `gcc.exe -O2 -s -o keyrate.exe keyrate.c`
+`task build` or `gcc.exe -O2 -s -o keyrate.exe keyrate.c`
 
 Move the built binary into a folder in your PATH.
 
