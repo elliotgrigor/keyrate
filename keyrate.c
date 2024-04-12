@@ -28,8 +28,12 @@ int main(int argc, char* argv[]) {
         argRepeatMs = strtol(argv[2], &end2, 10);
     }
     else if (argc == 1) {
+        if (trySetKeyRate(&keys) == 1) {
+            return 1;
+        }
+
         puts("Disabled keyrate");
-        return trySetKeyRate(&keys);
+        return 0;
     }
     else {
         puts("Usage: keyrate.exe [delay] [repeat]\n");
