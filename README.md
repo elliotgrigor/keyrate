@@ -7,7 +7,7 @@ by the Windows keyboard control panel.
 
 **Note**: Assumes the use of mingw64.
 
-Produces substantially larger binaries compared to the original. (49KB vs 3KB)
+Produces substantially larger binary compared to the original. (23KB vs 3KB)
 
 `task build` or `gcc.exe -O2 -s -o keyrate.exe keyrate.c`
 
